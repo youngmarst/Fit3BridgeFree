@@ -33,6 +33,20 @@ jobs:
           name: protocol-checks-log
           path: protocol-checks.log
 
+      - name: Push check log to ci-logs branch (public, for diagnostics)
+        if: failure()
+        run: |
+          git config user.email 68294418@qq.com
+          git config user.name youngmarst
+          git fetch origin main
+          git checkout -B ci-logs origin/main
+          mkdir -p logs
+          cp protocol-checks.log logs/protocol-checks-latest.log 2>/dev/null || true
+          cp build.log logs/build-latest.log 2>/dev/null || true
+          git add logs
+          git commit -m "CI diagnostics log (run ${GITHUB_RUN_ID})"
+          git push -f origin ci-logs
+
       - name: Generate Xcode project
         run: |
           brew install xcodegen
