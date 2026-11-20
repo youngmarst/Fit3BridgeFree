@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fit3 Bridge – Web test</title>
+<style>
+  body { font: 16px -apple-system, system-ui, sans-serif; margin: 0; padding: 16px; background: #f2f2f7; color: #111; }
+  h1 { font-size: 22px; margin: 4px 0 12px; }
+  .card { background: #fff; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+  button { font: inherit; width: 100%; padding: 12px; margin: 4px 0; border: 0; border-radius: 10px; background: #007aff; color: #fff; }
+  button:disabled { background: #b8c7da; }
+  button.face { background: #e5e5ea; color: #111; text-align: left; }
+  button.face.current { background: #34c759; color: #fff; }
+  input { font: inherit; width: 100%; box-sizing: border-box; padding: 10px; margin: 4px 0; border: 1px solid #ccc; border-radius: 8px; }
+  #status { font-weight: 600; }
+  #log { font: 11px ui-monospace, Menlo, monospace; white-space: pre-wrap; word-break: break-all; max-height: 45vh; overflow: auto; }
+  .muted { color: #666; font-size: 13px; }
+</style>
+</head>
+<body>
+<h1>Fit3 Bridge · Web test <span class="muted">v5</span></h1>
+<div class="card">
+  <div id="status">Not connected</div>
+  <div class="muted" id="info"></div>
+  <p class="muted">Open this page in the <b>Bluefy</b> browser (App Store, free). Before connecting: iPhone Settings → Bluetooth → ⓘ next to the band → Forget This Device, then reset the band.</p>
+  <button id="connect">Connect to Galaxy Fit3</button>
+</div>
+<div class="card">
+  <input id="title" value="Hello from iPhone">
+  <input id="body" value="Fit3 Bridge web test works 🎉">
+  <button id="notify" disabled>Send notification</button>
+  <button id="time" disabled>Sync time</button>
+  <button id="battery" disabled>Battery</button>
+</div>
+<div class="card">
+  <b>Test a real call alert</b>
+  <p class="muted">Uses Samsung's call service, so the band should ring until you answer or hang up.</p>
+  <input id="callName" value="Mom" placeholder="Caller name">
+  <input id="callNumber" value="+91 98765 43210" placeholder="Phone number">
+  <button id="ring" disabled>📞 Ring the band</button>
+  <button id="answer" disabled>Answer (stop ringing)</button>
+  <button id="hangup" disabled>Hang up → missed call</button>
+</div>
+<div class="card">
+  <b>Test alerts</b>
+  <button data-alert="sms" disabled>💬 SMS</button>
+  <button data-alert="gmail" disabled>✉️ Gmail</button>
+</div>
+<div class="card">
+  <b>Watch faces</b>
+  <p class="muted">Switch between faces already on the band. (Installing new faces is not possible from iPhone.)</p>
+  <button id="faces" disabled>Load watch faces</button>
+  <div id="faceList"></div>
+</div>
+<div class="card">
+  <button id="copy">Copy log</button>
+  <div id="log"></div>
+</div>
+
+<script type="module">
+import * as P from "./fit3.js";
+
+const $ = (id) => document.getElementById(id);
+const logLines = [];
+function log(s) {
+  const line = new Date().toISOString().slice(11, 23) + "  " + s;
+  logLines.push(line);
+  $("log").textContent = logLines.slice(-300).reverse().join("\n");
+}
+const status = (s) => { $("status").textContent = s; log("== " + s); };
+const enable = (on) => {
+  ["notify", "time", "battery", "faces", "ring", "answer", "hangup"].forEach((id) => ($(id).disabled = !on));
+  document.querySelectorAll("[data-alert]").forEach((b) => (b.disabled = !on));
+};
+
+let device, writeChar, writeWithResponse = true, mtu = 0, ready = false, setupStage = 0, seq = Date.now() % 100000 + 1;
+const asm = new P.Reassembler();
+const queue = []; let writing = false;
+const MAX_FRAME = 180;
+
+async function pump() {
+  if (writing) return;
+  writing = true;
+  try {
+    while (queue.length) {
+      const bytes = new Uint8Array(queue.shift());
+      if (writeWithResponse) await writeChar.writeValueWithResponse(bytes);
+      else { await writeChar.writeValueWithoutResponse(bytes); await new Promise((r) => setTimeout(r, 80)); }
+    }
+  } catch (e) { log("write error: " + describeError(e)); }
+  writing = false;
+}
+function send(service, msg) {
+  log(`TX ${P.SERVICE_NAMES[service] || service} ${P.hex(msg)}`);
+  queue.push(...P.encodeMessage(service, msg, mtu, MAX_FRAME));
+  pump();
+}
+const localeId = () => 13; // English
+const hour24 = () => !new Intl.DateTimeFormat(undefined, { hour: "numeric" }).resolvedOptions().hour12;
+const tzOffset = () => -new Date().getTimezoneOffset() * 60;
+const initSettings = () => P.initSettingsRequest(new Date(), tzOffset(), localeId(), hour24());
+
+function onFrame(data) {
+  if (P.isCapabilityRequest(data)) {
+    mtu = P.negotiatedTransportMtu(data);
+    log(`capability: transport MTU ${mtu}`);
+    queue.push(P.capabilityResponse(data)); pump();
+    status("Handshake OK – setting up band…");
+    setTimeout(() => { setupStage = 1; send(P.SERVICE.OOBE, P.watchInfoRequest); }, 220);
+    setTimeout(() => send(P.SERVICE.NOTIFICATIONS, P.iconCapabilityRequest), 650);
+    return;
+  }
+  let fr;
+  try { fr = P.decodeFrame(data); } catch (e) { log("RX raw " + P.hex(data)); return; }
+  const m = asm.push(fr);
+  if (!m) return;
+  log(`RX ${P.SERVICE_NAMES[m.service] || m.service} ${P.hex(m.message)}`);
+  if (m.service === P.SERVICE.OOBE) {
+    const id = P.oobeResponseId(m.message);
+    const v = P.findSoftwareVersion(m.message); if (v) $("info").textContent = "Firmware " + v;
+    if (id === 1 && setupStage === 1) { setupStage = 2; send(1, P.deviceStatusRequest); }
+    else if (id === 2 && setupStage === 2) { setupStage = 3; send(1, initSettings()); }
+    else if (id === 3 && setupStage === 3) { setupStage = 4; send(1, P.userAgreementRequest); }
+    else if (id === 4 && setupStage === 4) { setupStage = 5; done(); }
+  } else if (m.service === P.CALL) {
+    const c = P.parseCallFromBand(m.message);
+    if (c) {
+      log(`Band call action: ${c.action}`);
+      if (c.action === "reject" && callRinging) endAsMissed("Band pressed Decline");
+      if (c.action === "silence") status("Band pressed Mute");
+    }
+  } else if (m.service === P.WATCHFACE) {
+    const all = P.parseAllFacesInfo(m.message);
+    if (all) { renderFaces(all.faces, all.maximum); return; }
+    const list = P.parseInstalledFaces(m.message);
+    if (list) { renderFaces(list, null); return; }
+    const sel = P.parseFaceSelection(m.message);
+    if (sel && sel.confirmedChange) { status("✅ Watch face changed"); setTimeout(loadFaces, 400); }
+  } else if (m.service === P.SERVICE.SETTINGS) {
+    const b = P.parseBattery(m.message);
+    if (b) $("info").textContent = `Battery ${b.percent}%${b.charging ? " (charging)" : ""}`;
+  } else if (m.service === P.SERVICE.NOTIFICATIONS) {
+    const ack = P.parseAck(m.message);
+    if (ack) status(ack.accepted ? "✅ Band accepted notification" : "❌ Band rejected notification");
+  }
+}
+function done() {
+  ready = true; enable(true);
+  status("Connected ✅");
+  setTimeout(() => send(P.SERVICE.SETTINGS, P.batteryRequest), 300);
+}
+
+const SERVICE_UUID = "00001a1a-0000-1000-8000-00805f9b34fb";
+const PAGE_VERSION = "v5";
+
+function describeError(e) {
+  if (e == null) return "null";
+  if (typeof e !== "object") return `${typeof e} ${String(e)}`;
+  const parts = [];
+  if (e.name) parts.push(e.name);
+  if (e.message) parts.push(e.message);
+  if (e.code !== undefined) parts.push("code " + e.code);
+  try { const j = JSON.stringify(e); if (j && j !== "{}") parts.push(j); } catch {}
+  return parts.length ? parts.join(" | ") : String(e);
+}
+
+async function step(name, fn) {
+  log("→ " + name);
+  try {
+    const r = await fn();
+    log("✓ " + name);
+    return r;
+  } catch (e) {
+    const msg = `✗ ${name}: ${describeError(e)}`;
+    log(msg);
+    e.__step = name;
+    throw e;
+  }
+}
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function withRetry(name, fn, attempts = 3) {
+  for (let i = 1; ; i++) {
+    try { return await step(`${name} (try ${i})`, fn); }
+    catch (e) { if (i >= attempts) throw e; await sleep(2000); }
+  }
+}
+
+let notifyChar;
+$("connect").onclick = async () => {
+  try {
+    log(`page ${PAGE_VERSION}, UA: ${navigator.userAgent}`);
+    if (!navigator.bluetooth) { status("This browser has no Web Bluetooth – use Bluefy"); return; }
+    device = await step("requestDevice", () => navigator.bluetooth.requestDevice({
+      acceptAllDevices: true,
+      optionalServices: [SERVICE_UUID],
+    }));
+    log(`device: name=${device.name} id=${device.id}`);
+    device.addEventListener("gattserverdisconnected", () => { ready = false; enable(false); status("Disconnected"); });
+    status("Connecting to " + (device.name || "device") + "…");
+    const server = await withRetry("gatt.connect", () => device.gatt.connect());
+    const svc = await withRetry("getPrimaryService 1A1A", () => server.getPrimaryService(SERVICE_UUID));
+    try {
+      const chars = await step("list characteristics", () => svc.getCharacteristics());
+      for (const c of chars) {
+        const p = c.properties;
+        log(`  char ${c.uuid} read=${p.read} write=${p.write} wwr=${p.writeWithoutResponse} notify=${p.notify} indicate=${p.indicate}`);
+      }
+    } catch {}
+    notifyChar = await step("get notify char", () => svc.getCharacteristic(P.GATT.notify));
+    writeChar = await step("get write char", () => svc.getCharacteristic(P.GATT.write));
+    writeWithResponse = !!writeChar.properties.write;
+    log("write mode: " + (writeWithResponse ? "with response" : "without response"));
+    notifyChar.addEventListener("characteristicvaluechanged", (e) => {
+      const v = e.target.value; onFrame(Array.from(new Uint8Array(v.buffer, v.byteOffset, v.byteLength)));
+    });
+    // First subscribe may trigger iOS pairing; retry after the user accepts.
+    await withRetry("startNotifications", () => notifyChar.startNotifications(), 4);
+    status("Subscribed – waiting for band handshake…");
+    setTimeout(() => { if (!mtu) status("No handshake from band after 15s – reset the band and retry"); }, 15000);
+  } catch (e) {
+    status(`Error at "${e && e.__step ? e.__step : "?"}": ${describeError(e)}`);
+  }
+};
+$("notify").onclick = () => send(P.SERVICE.NOTIFICATIONS, P.newNotification({
+  sequence: seq++, title: $("title").value, text: $("body").value, appName: "Fit3 Bridge",
+  packageName: "com.fit3bridge.app", whenMillis: Date.now(), appId: 20,
+}));
+$("time").onclick = () => send(P.SERVICE.OOBE, initSettings());
+$("battery").onclick = () => send(P.SERVICE.SETTINGS, P.batteryRequest);
+function notify({ title, text, appName, packageName, appId, category, popup = true }) {
+  const sequence = seq++;
+  send(P.SERVICE.NOTIFICATIONS, P.newNotification({
+    sequence, title, text, appName, packageName, whenMillis: Date.now(), appId, category, popup,
+  }));
+  return sequence;
+}
+const deleteNotification = (sequence) =>
+  send(P.SERVICE.NOTIFICATIONS, [0x01, 1, sequence & 0xff, (sequence >>> 8) & 0xff, (sequence >>> 16) & 0xff, (sequence >>> 24) & 0xff]);
+
+const ALERTS = {
+  sms: () => notify({ title: "Mom", text: "Did you eat? Call me when you are free.", appName: "Messages",
+    packageName: "com.samsung.android.messaging", appId: 22, category: "msg" }),
+  gmail: () => notify({ title: "Amazon.in", text: "Your order has been shipped and will arrive tomorrow.", appName: "Gmail",
+    packageName: "com.google.android.gm", appId: 23, category: "email" }),
+};
+document.querySelectorAll("[data-alert]").forEach((b) => (b.onclick = () => ALERTS[b.dataset.alert]()));
+
+// --- Real call flow (service 3) ---
+let callRinging = false;
+const callInfo = () => ({ name: $("callName").value, number: $("callNumber").value, whenMillis: Date.now() });
+$("ring").onclick = () => {
+  send(P.CALL, P.callEnableNotification(true));
+  send(P.CALL, P.callContactPacket(callInfo()));
+  send(P.CALL, P.callStatePacket(P.CallState.RINGING));
+  callRinging = true;
+  status("📞 Ringing… (Answer or Hang up to stop)");
+};
+$("answer").onclick = () => {
+  send(P.CALL, P.callStatePacket(P.CallState.OFFHOOK));
+  setTimeout(() => send(P.CALL, P.callStatePacket(P.CallState.IDLE)), 3000);
+  callRinging = false;
+  status("Answered");
+};
+function endAsMissed(why) {
+  send(P.CALL, P.callStatePacket(P.CallState.IDLE));
+  setTimeout(() => send(P.CALL, P.missedCallPacket(callInfo())), 2000);
+  callRinging = false;
+  status(why);
+}
+$("hangup").onclick = () => endAsMissed("Hung up – missed call sent");
+
+let faceListTimer = null;
+function loadFaces() {
+  $("faceList").innerHTML = '<p class="muted">Loading…</p>';
+  send(P.WATCHFACE, P.allFacesInfoRequest);
+  clearTimeout(faceListTimer);
+  faceListTimer = setTimeout(() => {
+    if ($("faceList").textContent.includes("Loading")) send(P.WATCHFACE, P.installedFacesRequest);
+  }, 3000);
+}
+function renderFaces(faces, maximum) {
+  clearTimeout(faceListTimer);
+  const box = $("faceList");
+  box.innerHTML = `<p class="muted">${faces.length} face(s) installed${maximum ? ` (max ${maximum})` : ""}. Tap to switch.</p>`;
+  for (const f of faces) {
+    const b = document.createElement("button");
+    b.className = "face" + (f.current ? " current" : "");
+    const label = f.name && !f.name.startsWith("wf_name-") ? f.name : `Face ${f.id}`;
+    b.textContent = `${f.current ? "● " : ""}${label} · style ${f.sampler}`;
+    if (f.wireId < 1 || f.wireId > 255) b.disabled = true;
+    b.onclick = () => { status("Switching watch face…"); send(P.WATCHFACE, P.setCurrentFaceRequest(f.wireId, f.sampler)); };
+    box.appendChild(b);
+  }
+}
+$("faces").onclick = loadFaces;
+
+$("copy").onclick = async () => {
+  try { await navigator.clipboard.writeText(logLines.join("\n")); status("Log copied"); }
+  catch { status("Copy failed – select the log text manually"); }
+};
+</script>
+</body>
+</html>

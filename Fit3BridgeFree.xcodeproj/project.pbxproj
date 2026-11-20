@@ -1,0 +1,379 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0626063D7D93EC35DDDF79E1 /* Fit3Kit in Frameworks */ = {isa = PBXBuildFile; productRef = A1ACDC5F05ADC4E3AC20B367 /* Fit3Kit */; };
+		0B5C7C5D0A1E2DD5F372108D /* SendToBandIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42CA21DF5584B30BED6021 /* SendToBandIntent.swift */; };
+		152FB6F2042B7AE7E5ADF91E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4806A00973B63BEC7E935F5A /* Assets.xcassets */; };
+		79AA39E3C46B0A85DE7CE76F /* Logbook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F904079B3035461F55AD73 /* Logbook.swift */; };
+		7AB985B8FAD312CE3939E466 /* Fit3BridgeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DAD851ECECAFB099FAB8A7 /* Fit3BridgeApp.swift */; };
+		9587B28DF9E717709A1E41DC /* CallMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B553C2028E848405375115C /* CallMonitor.swift */; };
+		A349B6ACDA4B0A761553BB99 /* BandManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86A1D0CD07A9B65503C9BCA /* BandManager.swift */; };
+		A8CC55ABC5FCABEC33655D57 /* KeepAlive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564BC6DD1D5AAFFF30C5A48E /* KeepAlive.swift */; };
+		ED6081D7632867A17D37631D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A524CDDDD5831EAD29E60DC /* ContentView.swift */; };
+		F3598AFC05C8986C9A4AD769 /* HealthSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEAF93A055A37170667C11C /* HealthSyncManager.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		15317347672F7E13DCD7E5DB /* Fit3Kit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Fit3Kit; path = Fit3Kit; sourceTree = SOURCE_ROOT; };
+		1F80F4629FA0B59690E72A56 /* Fit3BridgeFree.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Fit3BridgeFree.entitlements; sourceTree = "<group>"; };
+		35F904079B3035461F55AD73 /* Logbook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logbook.swift; sourceTree = "<group>"; };
+		4806A00973B63BEC7E935F5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4B21CBEFB6BFC5A73E93CB04 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		564BC6DD1D5AAFFF30C5A48E /* KeepAlive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeepAlive.swift; sourceTree = "<group>"; };
+		69DAD851ECECAFB099FAB8A7 /* Fit3BridgeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fit3BridgeApp.swift; sourceTree = "<group>"; };
+		6A524CDDDD5831EAD29E60DC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		87BE077098BAAF205F540AA3 /* Fit3BridgeFree.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Fit3BridgeFree.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8B553C2028E848405375115C /* CallMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallMonitor.swift; sourceTree = "<group>"; };
+		BFEAF93A055A37170667C11C /* HealthSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthSyncManager.swift; sourceTree = "<group>"; };
+		D86A1D0CD07A9B65503C9BCA /* BandManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BandManager.swift; sourceTree = "<group>"; };
+		EC42CA21DF5584B30BED6021 /* SendToBandIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToBandIntent.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7D9EDB847A551642390B160E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0626063D7D93EC35DDDF79E1 /* Fit3Kit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		05E4FAB20989DA96F42E29CB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				87BE077098BAAF205F540AA3 /* Fit3BridgeFree.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		15E04CC02BBDDC19A1C803C0 = {
+			isa = PBXGroup;
+			children = (
+				196CBCEC32152E9A833D4657 /* App */,
+				75B24C186E44BDE44D3504C3 /* Packages */,
+				05E4FAB20989DA96F42E29CB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		196CBCEC32152E9A833D4657 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				4806A00973B63BEC7E935F5A /* Assets.xcassets */,
+				D86A1D0CD07A9B65503C9BCA /* BandManager.swift */,
+				8B553C2028E848405375115C /* CallMonitor.swift */,
+				6A524CDDDD5831EAD29E60DC /* ContentView.swift */,
+				69DAD851ECECAFB099FAB8A7 /* Fit3BridgeApp.swift */,
+				1F80F4629FA0B59690E72A56 /* Fit3BridgeFree.entitlements */,
+				BFEAF93A055A37170667C11C /* HealthSyncManager.swift */,
+				4B21CBEFB6BFC5A73E93CB04 /* Info.plist */,
+				564BC6DD1D5AAFFF30C5A48E /* KeepAlive.swift */,
+				35F904079B3035461F55AD73 /* Logbook.swift */,
+				EC42CA21DF5584B30BED6021 /* SendToBandIntent.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		75B24C186E44BDE44D3504C3 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				15317347672F7E13DCD7E5DB /* Fit3Kit */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5438A5DBFCD0C9F81C1231C0 /* Fit3BridgeFree */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 04E4A4938E02740D41AFBDAF /* Build configuration list for PBXNativeTarget "Fit3BridgeFree" */;
+			buildPhases = (
+				9C701532957D121440E32297 /* Sources */,
+				7AF84316D4F8CC1DD16DD092 /* Resources */,
+				7D9EDB847A551642390B160E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Fit3BridgeFree;
+			packageProductDependencies = (
+				A1ACDC5F05ADC4E3AC20B367 /* Fit3Kit */,
+			);
+			productName = Fit3BridgeFree;
+			productReference = 87BE077098BAAF205F540AA3 /* Fit3BridgeFree.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		90C1FD344362B6DB9241456C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					5438A5DBFCD0C9F81C1231C0 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = B79E2FDA3DDC1360F6889F39 /* Build configuration list for PBXProject "Fit3BridgeFree" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 15E04CC02BBDDC19A1C803C0;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				05E4C71F03F54C190721FF7D /* XCLocalSwiftPackageReference "Fit3Kit" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 05E4FAB20989DA96F42E29CB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5438A5DBFCD0C9F81C1231C0 /* Fit3BridgeFree */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7AF84316D4F8CC1DD16DD092 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				152FB6F2042B7AE7E5ADF91E /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9C701532957D121440E32297 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A349B6ACDA4B0A761553BB99 /* BandManager.swift in Sources */,
+				9587B28DF9E717709A1E41DC /* CallMonitor.swift in Sources */,
+				ED6081D7632867A17D37631D /* ContentView.swift in Sources */,
+				7AB985B8FAD312CE3939E466 /* Fit3BridgeApp.swift in Sources */,
+				F3598AFC05C8986C9A4AD769 /* HealthSyncManager.swift in Sources */,
+				A8CC55ABC5FCABEC33655D57 /* KeepAlive.swift in Sources */,
+				79AA39E3C46B0A85DE7CE76F /* Logbook.swift in Sources */,
+				0B5C7C5D0A1E2DD5F372108D /* SendToBandIntent.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		04D3B14F2239DFCD3E9AF163 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = App/Fit3BridgeFree.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fit3bridgefree.ios;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		3B65EB13C429A3D9B3A9EE6D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		59BB09F1E8D631B7A1734A37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		6E50B5EF388679D4738A8705 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = App/Fit3BridgeFree.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.fit3bridgefree.ios;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		04E4A4938E02740D41AFBDAF /* Build configuration list for PBXNativeTarget "Fit3BridgeFree" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E50B5EF388679D4738A8705 /* Debug */,
+				04D3B14F2239DFCD3E9AF163 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B79E2FDA3DDC1360F6889F39 /* Build configuration list for PBXProject "Fit3BridgeFree" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				59BB09F1E8D631B7A1734A37 /* Debug */,
+				3B65EB13C429A3D9B3A9EE6D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		05E4C71F03F54C190721FF7D /* XCLocalSwiftPackageReference "Fit3Kit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Fit3Kit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A1ACDC5F05ADC4E3AC20B367 /* Fit3Kit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Fit3Kit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 90C1FD344362B6DB9241456C /* Project object */;
+}

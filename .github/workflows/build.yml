@@ -1,0 +1,75 @@
+# Builds an unsigned Fit3BridgeFree.ipa on GitHub's macOS runners (no local Xcode needed)
+# and publishes it as the "latest" release, so the iPhone can download it directly.
+# The IPA is signed on the phone by SideStore (free Apple ID), or built+signed locally
+# with Xcode and a free Apple ID (see README).
+name: Build iOS app
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Xcode version
+        run: xcodebuild -version
+
+      - name: Protocol checks (includes health protocol vectors)
+        run: cd Fit3Kit && swift run Fit3KitChecks
+
+      - name: Generate Xcode project
+        run: |
+          brew install xcodegen
+          xcodegen generate
+
+      - name: Build (unsigned)
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project Fit3BridgeFree.xcodeproj \
+            -scheme Fit3BridgeFree \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            build | tee build.log | grep -E 'error:|warning: |BUILD' || true
+          test -d build/Build/Products/Release-iphoneos/Fit3BridgeFree.app
+
+      - name: Package IPA
+        run: |
+          APP=build/Build/Products/Release-iphoneos/Fit3BridgeFree.app
+          echo "--- bundle contents"; ls "$APP"
+          plutil -p "$APP/Info.plist" | grep -iE 'background|bluetooth|audio|health|MinimumOS' -A3
+          test -d "$APP/Metadata.appintents" && echo "App Intents metadata: OK" || echo "::warning::No App Intents metadata (Shortcuts action missing)"
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/Fit3BridgeFree.app Payload/
+          zip -qry Fit3BridgeFree.ipa Payload
+          ls -la Fit3BridgeFree.ipa
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Fit3BridgeFree-ipa
+          path: Fit3BridgeFree.ipa
+
+      - name: Publish "latest" release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest Fit3BridgeFree.ipa \
+            --title "Latest build" \
+            --notes "Built from ${GITHUB_SHA::7} on $(date -u '+%Y-%m-%d %H:%M UTC'). Install with SideStore (free Apple ID) or Xcode." \
+            --prerelease
+
+      - name: Show build log on failure
+        if: failure()
+        run: tail -200 build.log || true

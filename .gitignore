@@ -1,0 +1,7 @@
+build/
+DerivedData/
+*.ipa
+Payload/
+.fit3kit-build/
+.build/
+.DS_Store

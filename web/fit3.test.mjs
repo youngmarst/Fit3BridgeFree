@@ -1,0 +1,60 @@
+// node web/fit3.test.mjs
+import * as P from "./fit3.js";
+let ok = 0, bad = 0;
+const check = (c, n) => (c ? ok++ : (bad++, console.log("FAIL", n)));
+const eq = (a, b) => P.hex(a) === P.hex(b);
+
+const wi = P.encodeMessage(1, P.watchInfoRequest, 500)[0];
+check(P.hex(wi) === "000dc5c10040010101040200000005000e60ea", "watchInfo vector " + P.hex(wi));
+const d = P.decodeFrame(wi);
+check(d.service === 1 && eq(d.payload, P.watchInfoRequest), "decode");
+
+const cap = new Array(105).fill(0); cap[0] = 104; cap[1] = 0x14; cap[0x2c] = 1; cap[0x2d] = 0xf4;
+check(P.isCapabilityRequest(cap) && P.negotiatedTransportMtu(cap) === 500, "capability");
+check(P.capabilityResponse(cap)[1] === 0x15, "capability response");
+
+for (const mtu of [120, 180, 300, 500]) {
+  const msg = Array.from({ length: 900 }, (_, i) => i & 0xff);
+  const frames = P.encodeMessage(7, msg, mtu);
+  const r = new P.Reassembler(); let out = null;
+  for (const f of frames) out = r.push(P.decodeFrame(f)) || out;
+  check(frames.every((f) => f.length <= mtu) && out && out.service === 7 && eq(out.message, msg), "fragments " + mtu);
+}
+
+const init = P.initSettingsRequest(new Date(1_700_000_000_000), 3 * 3600, 57);
+check(P.hex(init) === "830139000200030a313730303030303030300400302a0501", "init settings " + P.hex(init));
+
+const n = P.newNotification({ sequence: 42, title: "Hi", text: "Body", appName: "Fit3", packageName: "io.test", whenMillis: 1234, appId: 20 });
+check(P.hex(n) === "800a0001012a0000000602323002d20400000000000003024869040400426f64790e04466974330f0110001207696f2e74657374", "notification " + P.hex(n));
+check(P.parseBattery([0x42, 5, 58, 6, 0]).percent === 58 && P.parseBattery([0x41, 5, 58, 6, 0]) === null, "battery");
+check(P.parseAck([0x40, 1, 42, 0, 0, 0, 11, 1]).sequence === 42, "ack");
+check(P.findSoftwareVersion([...Buffer.from("xxR390XXU0AZA3\0")]) === "R390XXU0AZA3", "version");
+// watch faces (vectors from Fit3-App tests)
+const entry = "18080450050130060e77665f6e616d652d303030383000080209000a020b010c00";
+const inst = P.parseInstalledFaces(P.fromHex("c10301" + entry));
+check(inst && inst.length === 1 && inst[0].id === 80 && inst[0].sampler === 2 && inst[0].current && inst[0].name === "wf_name-00080", "installed faces " + JSON.stringify(inst));
+const all = P.parseAllFacesInfo(P.fromHex("c00050010a02010301" + entry));
+check(all && all.maximum === 10 && all.currentId === 80 && all.faces.length === 1, "all faces info");
+check(P.parseInstalledFaces(P.fromHex("410301180204161d03"))[0].id === 22, "simple face list");
+check(P.parseInstalledFaces(P.fromHex("c10302180204160800")) === null, "missing entry rejected");
+check(P.parseInstalledFaces(P.fromHex("c1030118020416080000")) === null, "trailing data rejected");
+check(P.parseAllFacesInfo(P.fromHex("c00016010a02020300")) === null, "count mismatch rejected");
+check(P.hex(P.setCurrentFaceRequest(22, 3)) === "0304161d03", "set face");
+const sel = P.parseFaceSelection(P.fromHex("4304161d03"));
+check(sel && sel.id === 22 && sel.sampler === 3 && sel.confirmedChange, "set face response");
+check(P.parseFaceSelection(P.fromHex("4304161c03")) === null, "bad set face response");
+// calls (layout from the official plugin's SAMessageData builder)
+const sacall = [...Buffer.from("com.samsung.android.providers.sacall.SACallHandlerService")];
+const cp = P.callContactPacket({ name: "Mom", number: "+91 98765 43210", whenMillis: 1234 });
+const cpExpected = [0x82, 7, 0, 1, 7, 1, 0, 0, 0, 5, sacall.length, ...sacall, 6, 0xd2, 4, 0, 0, 0, 0, 0, 0,
+  4, 3, ...Buffer.from("Mom"), 3, 15, ...Buffer.from("+91 98765 43210"), 9, 0];
+check(P.hex(cp) === P.hex(cpExpected), "call contact packet " + P.hex(cp));
+check(sacall.length === 57, "agent name length");
+check(P.hex(P.callStatePacket(P.CallState.RINGING)) === "0301", "ringing");
+check(P.hex(P.callEnableNotification(true)) === "0801", "enable");
+const mc = P.missedCallPacket({ name: "", number: "123", whenMillis: 1 });
+check(P.hex(mc) === "860304000303313233060100000000000000", "missed call " + P.hex(mc));
+check(P.parseCallFromBand([0x05]).action === "reject" && P.parseCallFromBand([0x01]).action === "silence", "band call actions");
+check(P.callContactPacket({ name: "x".repeat(300) }).length < 260, "name truncated to 127 bytes");
+console.log(`${ok} passed, ${bad} failed`);
+process.exit(bad ? 1 : 0);
