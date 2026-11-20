@@ -252,7 +252,7 @@ public enum PedometerMerge {
     }
 }
 
-extension Date {
+public extension Date {
     init(milliseconds: Int64) { self.init(timeIntervalSince1970: Double(milliseconds) / 1000) }
     var milliseconds: Int64 { Int64((timeIntervalSince1970 * 1000).rounded()) }
 }

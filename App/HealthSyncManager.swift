@@ -47,7 +47,7 @@ final class HealthSyncManager: ObservableObject {
         enabled = defaults.object(forKey: "health.enabled") as? Bool ?? true
         let keys = defaults.array(forKey: "health.writtenSteps") as? [Int64] ?? []
         writtenStepKeys = Set(keys)
-        lastWrittenHeartRateAt = defaults.double(forKey: "health.lastHeartRateAt")
+        lastWrittenHeartRateAt = Int64(defaults.double(forKey: "health.lastHeartRateAt"))
     }
 
     // MARK: Session lifecycle (called from BandManager)
