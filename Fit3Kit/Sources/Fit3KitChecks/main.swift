@@ -213,8 +213,13 @@ let raw1990: Int32 = 123_456_789
 func le32bytes(_ v: Int32) -> [UInt8] {
     [UInt8(truncatingIfNeeded: v), UInt8(truncatingIfNeeded: v >> 8), UInt8(truncatingIfNeeded: v >> 16), UInt8(truncatingIfNeeded: v >> 24)]
 }
-let hrFields: [UInt8] = [5] + le32bytes(raw1990) + [1] + le32bytes(raw1990) + [2] + le32bytes(raw1990 + 60) +
-    [32, 72, 33, 60, 34, 95]
+var hrFields: [UInt8] = [5]
+hrFields += le32bytes(raw1990)
+hrFields += [1]
+hrFields += le32bytes(raw1990)
+hrFields += [2]
+hrFields += le32bytes(raw1990 + 60)
+hrFields += [32, 72, 33, 60, 34, 95]
 var hrPacket: [UInt8] = [0x82, 2, 0xE0, 0x28, 0x27, 10, 0] // record: more=0
 hrPacket += le32bytes(Int32(hrFields.count))
 hrPacket += hrFields
