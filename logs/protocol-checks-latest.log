@@ -1,0 +1,50 @@
+Building for debugging...
+[0/7] Write sources
+[1/7] Write Fit3KitChecks-entitlement.plist
+[3/7] Write swift-version--79AA4F9932D1E87A.txt
+[5/13] Emitting module Fit3Kit
+[6/15] Compiling Fit3Kit SetupCodecs.swift
+[7/15] Compiling Fit3Kit WatchFaceCodec.swift
+[8/15] Compiling Fit3Kit CallCodec.swift
+/Users/runner/work/Fit3BridgeFree/Fit3BridgeFree/Fit3Kit/Sources/Fit3Kit/Fit3Health.swift:414:13: warning: variable 's' was never mutated; consider changing to 'let' constant
+412 | 
+413 |     private static func touched(_ state: HealthCodecState, _ nowMillis: Int64) -> HealthCodecState {
+414 |         var s = state
+    |             `- warning: variable 's' was never mutated; consider changing to 'let' constant
+415 |         // lastTransportMillis is only informational here; keep the struct small.
+416 |         _ = nowMillis
+[9/15] Compiling Fit3Kit Fit3Health.swift
+/Users/runner/work/Fit3BridgeFree/Fit3BridgeFree/Fit3Kit/Sources/Fit3Kit/Fit3Health.swift:414:13: warning: variable 's' was never mutated; consider changing to 'let' constant
+412 | 
+413 |     private static func touched(_ state: HealthCodecState, _ nowMillis: Int64) -> HealthCodecState {
+414 |         var s = state
+    |             `- warning: variable 's' was never mutated; consider changing to 'let' constant
+415 |         // lastTransportMillis is only informational here; keep the struct small.
+416 |         _ = nowMillis
+[10/15] Compiling Fit3Kit NotificationCodec.swift
+/Users/runner/work/Fit3BridgeFree/Fit3BridgeFree/Fit3Kit/Sources/Fit3Kit/Fit3Health.swift:414:13: warning: variable 's' was never mutated; consider changing to 'let' constant
+412 | 
+413 |     private static func touched(_ state: HealthCodecState, _ nowMillis: Int64) -> HealthCodecState {
+414 |         var s = state
+    |             `- warning: variable 's' was never mutated; consider changing to 'let' constant
+415 |         // lastTransportMillis is only informational here; keep the struct small.
+416 |         _ = nowMillis
+[11/15] Compiling Fit3Kit SAMessage.swift
+[12/15] Compiling Fit3Kit SapCodec.swift
+error: emit-module command failed with exit code 1 (use -v to see invocation)
+[13/17] Emitting module Fit3KitChecks
+/Users/runner/work/Fit3BridgeFree/Fit3BridgeFree/Fit3Kit/Sources/Fit3KitChecks/main.swift:216:5: error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
+214 |     [UInt8(truncatingIfNeeded: v), UInt8(truncatingIfNeeded: v >> 8), UInt8(truncatingIfNeeded: v >> 16), UInt8(truncatingIfNeeded: v >> 24)]
+215 | }
+216 | let hrFields: [UInt8] = [5] + le32bytes(raw1990) + [1] + le32bytes(raw1990) + [2] + le32bytes(raw1990 + 60) +
+    |     `- error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
+217 |     [32, 72, 33, 60, 34, 95]
+218 | var hrPacket: [UInt8] = [0x82, 2, 0xE0, 0x28, 0x27, 10, 0] // record: more=0
+[14/17] Compiling Fit3KitChecks main.swift
+/Users/runner/work/Fit3BridgeFree/Fit3BridgeFree/Fit3Kit/Sources/Fit3KitChecks/main.swift:216:5: error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
+214 |     [UInt8(truncatingIfNeeded: v), UInt8(truncatingIfNeeded: v >> 8), UInt8(truncatingIfNeeded: v >> 16), UInt8(truncatingIfNeeded: v >> 24)]
+215 | }
+216 | let hrFields: [UInt8] = [5] + le32bytes(raw1990) + [1] + le32bytes(raw1990) + [2] + le32bytes(raw1990 + 60) +
+    |     `- error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
+217 |     [32, 72, 33, 60, 34, 95]
+218 | var hrPacket: [UInt8] = [0x82, 2, 0xE0, 0x28, 0x27, 10, 0] // record: more=0
