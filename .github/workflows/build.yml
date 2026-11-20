@@ -22,7 +22,16 @@ jobs:
         run: xcodebuild -version
 
       - name: Protocol checks (includes health protocol vectors)
-        run: cd Fit3Kit && swift run Fit3KitChecks
+        run: |
+          set -o pipefail
+          cd Fit3Kit && swift run Fit3KitChecks 2>&1 | tee ../protocol-checks.log
+
+      - name: Upload protocol check log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: protocol-checks-log
+          path: protocol-checks.log
 
       - name: Generate Xcode project
         run: |
